@@ -1,0 +1,8 @@
+--dataset
+pfam
+--Nfolds
+3
+--Ntraining
+1
+--exp_index
+0

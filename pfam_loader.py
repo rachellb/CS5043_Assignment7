@@ -38,7 +38,7 @@ def load_pfam_file(basedir, fold):
     :param fold: Fold to load
     '''
     
-    df = pd.read_csv('%s/pfam_fold_%d.csv'%(basedir, fold))
+    df = pd.read_csv('%s/pfamB_fold_%d.csv'%(basedir, fold))
     return df
 
 def load_pfam_dataset(basedir = '/home/fagg/datasets/pfam', rotation = 0, nfolds = 5, ntrain_folds = 3):
@@ -169,7 +169,7 @@ def save_data_sets(basedir = '/home/fagg/datasets/pfam', out_basedir = None, nfo
         dat=prepare_data_set(basedir=basedir, rotation=r, nfolds=nfolds, ntrain_folds=ntrain_folds)
 
         # Write rotation to pickle file
-        fname = '%s/pfam_rotation_%d.pkl'%(basedir, r)
+        fname = '%s/pfamB_rotation_%d.pkl'%(basedir, r)
 
         with open(fname, 'wb') as fp:
             pickle.dump(dat, fp)
@@ -183,7 +183,7 @@ def load_rotation(basedir = '/home/fagg/datasets/pfam', rotation=0):
 
     :return: Dictionary containing a full train/validation/test data set
     '''
-    fname = '%s/pfam_rotation_%d.pkl'%(basedir, rotation)
+    fname = '%s/pfamB_rotation_%d.pkl'%(basedir, rotation)
     with open(fname, 'rb') as fp:
         dat_out = pickle.load(fp)
         return dat_out
