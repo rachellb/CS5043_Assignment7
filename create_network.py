@@ -14,6 +14,7 @@ def create_network(outs,
                    len_max,
                    dense_layers,
                    attention_layers,
+                   conv_layers,
                    activation=None,
                    activation_dense=None,
                    lambda_regularization=None,
@@ -34,8 +35,9 @@ def create_network(outs,
 
     layer = Embedding(input_dim=vocab_size, output_dim=output_dim, input_length=len_max)(input_tensor)
 
-    layer = Conv1D(filters=64, kernel_size=25, activation='relu', strides=2, padding='same')(layer)
-    layer = Conv1D(filters=64, kernel_size=25, activation='relu', strides=2, padding='same')(layer)
+    for i in range(len(conv_layers)):
+        layer = Conv1D(filters=conv_layers[i]['filters'], kernel_size=25, activation='relu', strides=2, padding='same')(layer)
+
 
    # Embedding/Compression/Input into MHA layer, then in the end have several dense layers
     # MHA taking examples/time/# of channels -> output of same shape

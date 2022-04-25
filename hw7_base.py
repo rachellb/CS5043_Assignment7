@@ -278,12 +278,12 @@ def execute_exp(args=None):
 
     # Essentially, each layer is a dictionary with a given set of properties.
     dense_layers = [{'units': i} for i in args.hidden]
-
     print("Dense layers:", dense_layers)
 
-    # Essentially, each layer is a dictionary with a given set of properties.
-    attention_layers = [{'heads': i} for i in args.attention]
+    conv_layers = [{'filters': i} for i in args.filters]
+    print("Attention layers:", conv_layers)
 
+    attention_layers = [{'heads': i} for i in args.attention]
     print("Attention layers:", attention_layers)
 
     model = create_network(outs=dat_out['outs_train'],
@@ -292,6 +292,7 @@ def execute_exp(args=None):
                            len_max=dat_out['len_max'],
                            dense_layers=dense_layers,
                            attention_layers=attention_layers,
+                           conv_layers=conv_layers,
                            activation_dense=args.hidden_activation,
                            lambda_regularization=None,
                            dropout=args.dropout,
@@ -339,7 +340,6 @@ def execute_exp(args=None):
                         validation_steps=None,
                         callbacks=[early_stopping_cb])
 
-    print(model.summary())
 
 
     # Generate results data

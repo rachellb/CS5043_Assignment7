@@ -8,4 +8,10 @@ pfam
 0
 --epochs
 1
+--filters
+16
+32
+64
+--label
+moreFilters
 -vvv
