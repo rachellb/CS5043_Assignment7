@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import (Input, Embedding, SimpleRNN, Dense, Conv1D, MaxPool1D, LSTM,
                                      BatchNormalization, Dropout, Activation, GlobalMaxPooling1D, GRU,
-                                     MultiHeadAttention)
+                                     MultiHeadAttention, Flatten)
 
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import Model, Sequential
@@ -14,13 +14,10 @@ def create_network(outs,
                    len_max,
                    dense_layers,
                    attention_layers,
-                   n_neurons=10,
                    activation=None,
                    activation_dense=None,
                    lambda_regularization=None,
-                   use_gru=False,
                    dropout=None,
-                   r_drop=None,
                    lrate=0.0001):
 
     if lambda_regularization is not None:
@@ -37,22 +34,23 @@ def create_network(outs,
 
     model.add(Conv1D(filters=64, kernel_size=25, activation='relu', strides=2, padding='same'))
 
-    """
-    model.add(LSTM(n_neurons,
-                   activation='tanh',
-                   use_bias=True,
-                   return_sequences=False,  # Produce entire sequence of outputs
-                   kernel_initializer='random_uniform',
-                   kernel_regularizer=lambda_regularization,
-                   unroll=False))  # Laying this out on the GPU.
-    # Different timesteps can get allocated to different parts of GPU
-    # Runs really fast if enough space on GPU
-    """
+
+   # Embedding/Compression/Input into MHA layer, then in the end have several dense layers
+    # MHA taking examples/time/# of channels -> output of same shape
+    # Then flatten and taking additional steps from there
+    # You can also just tell the MHA what the output shape should be, so it can do that on its own
+    # In MHA you can skip the RNN, figure out what time steps are important, and then what out is a representation of that
+    # Maybe just have flatten? Apparently works fine?
+    # Information at time 1 needs to be at same level as at time k (What does that mean?)
+    # With RNN we were taking info from only final time step, attention takes all of them
 
 
+    # TODO: Figure out what shapes should be here, and what should be input for parameters
+    # One tensor for keys and queries, one for values
     for i in range(len(attention_layers)):
         model.add(MultiHeadAttention(num_heads=attention_layers[i]['heads'], key_dim=output_dim))
 
+    model.add(Flatten())
 
     for i in range(len(dense_layers)):
         model.add(Dense(units=dense_layers[i]['units'],
