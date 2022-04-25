@@ -23,17 +23,19 @@ def create_network(outs,
     if lambda_regularization is not None:
         lambda_regularization = tf.keras.regularizers.l2(lambda_regularization)
 
-    # Initialize the model
-    model = Sequential()
 
     # Adds an embedding layer
     # Input_dim = size of the vocabulary
     # Output_dim = length of the vector for each word (essentially a hyperparameter)
     # input_length = maximum length of a sequence
-    model.add(Embedding(input_dim=vocab_size, output_dim=output_dim, input_length=len_max))
 
-    model.add(Conv1D(filters=64, kernel_size=25, activation='relu', strides=2, padding='same'))
+    # TODO: Figure out what goes here
+    input_tensor = Input(shape=(len_max,))
 
+    layer = Embedding(input_dim=vocab_size, output_dim=output_dim, input_length=len_max)(input_tensor)
+
+    layer = Conv1D(filters=64, kernel_size=25, activation='relu', strides=2, padding='same')(layer)
+    layer = Conv1D(filters=64, kernel_size=25, activation='relu', strides=2, padding='same')(layer)
 
    # Embedding/Compression/Input into MHA layer, then in the end have several dense layers
     # MHA taking examples/time/# of channels -> output of same shape
@@ -45,35 +47,38 @@ def create_network(outs,
     # With RNN we were taking info from only final time step, attention takes all of them
 
 
-    # TODO: Figure out what shapes should be here, and what should be input for parameters
+
     # One tensor for keys and queries, one for values
     for i in range(len(attention_layers)):
-        model.add(MultiHeadAttention(num_heads=attention_layers[i]['heads'], key_dim=output_dim))
+        layer = MultiHeadAttention(num_heads=attention_layers[i]['heads'], key_dim=output_dim)(layer, layer)
 
-    model.add(Flatten())
+    layer = Flatten()(layer)
 
     for i in range(len(dense_layers)):
-        model.add(Dense(units=dense_layers[i]['units'],
+        layer = Dense(units=dense_layers[i]['units'],
                         activation=activation_dense,
                         use_bias=True,
                         kernel_initializer='random_uniform',
-                        kernel_regularizer=lambda_regularization))
+                        kernel_regularizer=lambda_regularization)(layer)
 
         if dropout:
-            model.add(Dropout(rate=dropout))
+            layer = Dropout(rate=dropout)(layer)
 
     # Turn into a pandas dataframe in order to use nunique to find appropriate number of output units.
     outs = pd.DataFrame(outs)
-    model.add(Dense(units=outs.nunique(),
+
+    output_tensor = Dense(units=outs.nunique(),
                     use_bias=True,
                     kernel_initializer='random_uniform',
                     activation='softmax',
                     name='Output_layer',
-                    kernel_regularizer=lambda_regularization))
+                    kernel_regularizer=lambda_regularization)(layer)
 
     # The optimizer determines how the gradient descent is to be done
     opt = tf.keras.optimizers.Adam(learning_rate=lrate, beta_1=0.9, beta_2=0.999,
                                    epsilon=None, decay=0.0, amsgrad=False)
+
+    model = Model(inputs=input_tensor, outputs=output_tensor)
 
     model.compile(loss='sparse_categorical_crossentropy', optimizer=opt, metrics=['sparse_categorical_accuracy'])
 

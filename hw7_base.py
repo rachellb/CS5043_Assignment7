@@ -294,7 +294,6 @@ def execute_exp(args=None):
                            attention_layers=attention_layers,
                            activation_dense=args.hidden_activation,
                            lambda_regularization=None,
-                           use_gru=False,
                            dropout=args.dropout,
                            lrate=args.lrate)
 

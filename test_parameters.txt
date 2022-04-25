@@ -6,3 +6,6 @@ pfam
 1
 --exp_index
 0
+--epochs
+1
+-vvv
