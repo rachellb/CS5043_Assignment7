@@ -212,14 +212,21 @@ def generate_fname(args, params_str):
     else:
         epochs_str = "%d_" % args.epochs
 
+    # Epochs
+    if args.attention is None:
+        att_str = ""
+    else:
+        att_str = "%d_" % args.attention
+
     # learning rate
     lrate_str = "LR_%0.6f_" % args.lrate
 
-    fname = "%s/amino_%s%s_epochs_%s_hidden_%s_%s%s%s%sntrain_%02d_rot_%02d" % (
+    fname = "%s/amino_%s%s_epochs_%s_att_%s_hidden_%s_%s%s%s%sntrain_%02d_rot_%02d" % (
         args.results_path,
         experiment_type_str,
         label_str,
         epochs_str,
+        att_str,
         hidden_str,
         dropout_str,
         regularizer_l1_str,

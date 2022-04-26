@@ -9,9 +9,10 @@
 --l2
 0.0001
 --epochs
-10
+2
 --filters
 16
 32
 64
-128
+--attention
+10
