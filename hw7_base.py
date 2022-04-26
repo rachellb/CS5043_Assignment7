@@ -175,6 +175,8 @@ def generate_fname(args, params_str):
     '''
     # Hidden unit configuration
     hidden_str = '_'.join(str(x) for x in args.hidden)
+    # Hidden unit configuration
+    att_str = '_'.join(str(x) for x in args.attention)
 
     # Dropout
     if args.dropout is None:
@@ -211,12 +213,6 @@ def generate_fname(args, params_str):
         epochs_str = ""
     else:
         epochs_str = "%d_" % args.epochs
-
-    # Epochs
-    if args.attention is None:
-        att_str = ""
-    else:
-        att_str = "%d_" % args.attention
 
     # learning rate
     lrate_str = "LR_%0.6f_" % args.lrate
