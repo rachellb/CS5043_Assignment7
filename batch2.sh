@@ -18,6 +18,6 @@
 conda activate tf
 
 
-python hw7_base.py @parameters.txt --epochs 2 --label "short" --exp_index $SLURM_ARRAY_TASK_ID
+python hw7_base.py @parameters.txt --label "short" --exp_index $SLURM_ARRAY_TASK_ID
 
 

@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
 # memory in MB
-#SBATCH --mem=1024
+#SBATCH --mem=2048
 #SBATCH --output=results/molecule_%04a_stdout.txt
 #SBATCH --error=results/molecule_%04a_stderr.txt
 #SBATCH --time=24:00:00
@@ -18,6 +18,6 @@
 conda activate tf
 
 
-python hw7_base.py @parameters.txt --label "moreFilters" --exp_index $SLURM_ARRAY_TASK_ID
+python hw7_base.py @parameters.txt --attention 10 10 --exp_index $SLURM_ARRAY_TASK_ID
 
 
