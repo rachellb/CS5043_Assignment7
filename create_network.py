@@ -3,7 +3,6 @@ from tensorflow.keras.layers import (Input, Embedding, SimpleRNN, Dense, Conv1D,
                                      BatchNormalization, Dropout, Activation, GlobalMaxPooling1D, GRU,
                                      MultiHeadAttention, Flatten)
 
-from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import Model, Sequential
 import pandas as pd
 
@@ -36,7 +35,10 @@ def create_network(outs,
 
     for i in range(len(conv_layers)):
         layer = Conv1D(filters=conv_layers[i]['filters'], kernel_size=conv_layers[i]['kernel_size']
-                       , activation='relu', strides=conv_layers[i]['strides'], padding='same')(layer)
+                       , activation='relu', strides=1, padding='same')(layer)
+
+        layer = MaxPool1D(pool_size=conv_layers[i]['pool_size'], strides=conv_layers[i]['strides'], padding="same",
+                          data_format="channels_last",)(layer)
 
 
    # Embedding/Compression/Input into MHA layer, then in the end have several dense layers

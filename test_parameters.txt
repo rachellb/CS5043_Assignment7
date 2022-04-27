@@ -19,10 +19,10 @@ pfam
 2
 2
 --kernels
-5
-5
-5
-5
+3
+3
+3
+3
 --attention
 5
 5
