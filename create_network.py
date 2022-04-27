@@ -30,13 +30,13 @@ def create_network(outs,
     # Output_dim = length of the vector for each word (essentially a hyperparameter)
     # input_length = maximum length of a sequence
 
-    # TODO: Figure out what goes here
     input_tensor = Input(shape=(len_max,))
 
     layer = Embedding(input_dim=vocab_size, output_dim=output_dim, input_length=len_max)(input_tensor)
 
     for i in range(len(conv_layers)):
-        layer = Conv1D(filters=conv_layers[i]['filters'], kernel_size=25, activation='relu', strides=2, padding='same')(layer)
+        layer = Conv1D(filters=conv_layers[i]['filters'], kernel_size=conv_layers[i]['kernel_size']
+                       , activation='relu', strides=conv_layers[i]['strides'], padding='same')(layer)
 
 
    # Embedding/Compression/Input into MHA layer, then in the end have several dense layers
@@ -50,10 +50,14 @@ def create_network(outs,
 
 
 
-    # One tensor for keys and queries, one for values
-    for i in range(len(attention_layers)):
+    # Leave shape alone for the first few layers of attention
+    for i in range(len(attention_layers)-1):
         layer = MultiHeadAttention(num_heads=attention_layers[i]['heads'], key_dim=output_dim)(layer, layer)
 
+    # For the final layer, force output to be a vector
+    layer = MultiHeadAttention(num_heads=attention_layers[-1]['heads'], key_dim=output_dim, output_shape=(1, ))(layer,layer)
+
+    # Flatten to remove extra dimension
     layer = Flatten()(layer)
 
     for i in range(len(dense_layers)):

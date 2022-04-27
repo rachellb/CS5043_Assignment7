@@ -75,6 +75,10 @@ def create_parser():
     # CNN parameters
     parser.add_argument('--filters', nargs='+', type=int, default=[64],
                         help='Number of filters per 1D-CNN')
+    parser.add_argument('--kernels', nargs='+', type=int, default=[5],
+                        help='kernel size of 1D-CNN')
+    parser.add_argument('--pool', nargs='+', type=int, default=[2],
+                        help='pool size of 1D-CNN')
 
     # Hidden unit parameters
     parser.add_argument('--hidden', nargs='+', type=int, default=[100, 5],
@@ -283,8 +287,12 @@ def execute_exp(args=None):
     dense_layers = [{'units': i} for i in args.hidden]
     print("Dense layers:", dense_layers)
 
-    conv_layers = [{'filters': i} for i in args.filters]
-    print("Attention layers:", conv_layers)
+    conv_layers = [{'filters': f, 'kernel_size': (s), 'pool_size': (p), 'strides': (p)} if p > 1
+                   else {'filters': f, 'kernel_size': (s), 'pool_size': None, 'strides': None}
+                   for s, f, p, in zip(args.kernels, args.filters, args.pool)]
+
+    #conv_layers = [{'filters': i} for i in args.filters]
+    print("Conv layers:", conv_layers)
 
     attention_layers = [{'heads': i} for i in args.attention]
     print("Attention layers:", attention_layers)

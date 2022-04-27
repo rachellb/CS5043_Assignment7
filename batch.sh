@@ -8,7 +8,7 @@
 #SBATCH --output=results/molecule_%04a_stdout.txt
 #SBATCH --error=results/molecule_%04a_stderr.txt
 #SBATCH --time=24:00:00
-#SBATCH --job-name=molecule_exp
+#SBATCH --job-name=molecule_1_exp
 #SBATCH --mail-user=rachel.l.bennett-1@ou.edu
 #SBATCH --mail-type=ALL
 #SBATCH --chdir=/home/cs504303/aml/CS5043_Assignment7
@@ -17,7 +17,5 @@
 . /home/fagg/tf_setup.sh
 conda activate tf
 
-
 python hw7_base.py @parameters.txt --attention 10 10 --exp_index $SLURM_ARRAY_TASK_ID
-
 
