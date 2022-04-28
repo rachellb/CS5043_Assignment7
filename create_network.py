@@ -62,6 +62,7 @@ def create_network(outs,
     # Flatten to remove extra dimension
     layer = Flatten()(layer)
 
+    """
     for i in range(len(dense_layers)):
         layer = Dense(units=dense_layers[i]['units'],
                         activation=activation_dense,
@@ -71,7 +72,7 @@ def create_network(outs,
 
         if dropout:
             layer = Dropout(rate=dropout)(layer)
-
+    """
     # Turn into a pandas dataframe in order to use nunique to find appropriate number of output units.
     outs = pd.DataFrame(outs)
 

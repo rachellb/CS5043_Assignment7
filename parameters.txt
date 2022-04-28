@@ -1,7 +1,5 @@
 --hidden
 15
-10
-5
 --dropout
 0.3
 --embedding_length
@@ -14,14 +12,11 @@
 16
 32
 64
-128
 --pool
 2
 2
 2
-2
 --kernels
-3
 3
 3
 3
